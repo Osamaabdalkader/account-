@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>تسجيل الدخول بجوجل مع Firebase</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+            background-color: #f5f5f5;
+        }
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            background-color: #4285F4;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 30px;
+        }
+        #userData {
+            margin-top: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: white;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+    <!-- مكتبات Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+</head>
+<body>
+    <h1>تسجيل الدخول بحساب جوجل</h1>
+    <button id="googleLogin">سجل الدخول مع جوجل</button>
+    
+    <div id="userData" style="display:none;">
+        <h2>مرحباً <span id="userName"></span>!</h2>
+        <p>تم تسجيل دخولك بنجاح وحفظ بياناتك في قاعدة البيانات</p>
+        <p>البريد الإلكتروني: <span id="userEmail"></span></p>
+        <p>معرف المستخدم: <span id="userId"></span></p>
+    </div>
+
+    <script>
+        // التهيئة - استبدل هذه القيم ببياناتك من Firebase
+
+
+// firebase-config.js
+const firebaseConfig = {
+    apiKey: "AIzaSyC7z9hhq51EhsdsWfAQmFEYNgCeYqkiAQ8",
+    authDomain: "website-23082.firebaseapp.com",
+    databaseURL: "https://website-23082-default-rtdb.firebaseio.com",
+    projectId: "website-23082",
+    storageBucket: "website-23082.appspot.com",
+    messagingSenderId: "650852775693",
+    appId: "1:650852775693:web:22a7acd661478d10a1a244"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+// الحصول على مراجع الخدمات التي ستستخدمها
+const auth = firebase.auth();
+const database = firebase.database();
+
+
+
+
+
+
+
+
+
+
+
+        // تسجيل الدخول بجوجل
+        document.getElementById('googleLogin').addEventListener('click', () => {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            
+            auth.signInWithPopup(provider)
+                .then((result) => {
+                    const user = result.user;
+                    console.log('تم التسجيل بنجاح:', user);
+                    showUserData(user);
+                    saveUserData(user);
+                })
+                .catch((error) => {
+                    console.error('خطأ في التسجيل:', error);
+                    alert('حدث خطأ أثناء التسجيل: ' + error.message);
+                });
+        });
+
+        // عرض بيانات المستخدم
+        function showUserData(user) {
+            document.getElementById('userName').textContent = user.displayName;
+            document.getElementById('userEmail').textContent = user.email;
+            document.getElementById('userId').textContent = user.uid;
+            document.getElementById('userData').style.display = 'block';
+            document.getElementById('googleLogin').textContent = 'تسجيل الخروج';
+            
+            // تغيير الزر لتسجيل الخروج
+            document.getElementById('googleLogin').onclick = () => {
+                auth.signOut();
+                location.reload();
+            };
+        }
+
+        // حفظ بيانات المستخدم في قاعدة البيانات
+        function saveUserData(user) {
+            const userData = {
+                uid: user.uid,
+                email: user.email,
+                displayName: user.displayName,
+                photoURL: user.photoURL,
+                lastLogin: new Date().toISOString()
+            };
+
+            database.ref('users/' + user.uid).set(userData)
+                .then(() => console.log('تم حفظ البيانات في قاعدة البيانات!'))
+                .catch((error) => console.error('خطأ في حفظ البيانات:', error));
+        }
+
+        // التحقق من حالة تسجيل الدخول عند تحميل الصفحة
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                showUserData(user);
+            }
+        });
+    </script>
+</body>
+</html>
