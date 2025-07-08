@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام تسجيل الدخول المبسط</title>
+    <title>سوق الإلكترونيات</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
     <style>
         * {
             margin: 0;
@@ -17,269 +19,757 @@
         
         body {
             background: #f5f8fa;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
+            color: #333;
+            padding-bottom: 70px;
         }
         
         .container {
-            width: 100%;
-            max-width: 500px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
         }
         
+        /* التصميم العام للعناصر */
+        .section {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .btn {
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn-primary {
+            background: #4285F4;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #3367d6;
+        }
+        
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #333;
+            border: 1px solid #eee;
+        }
+        
+        .btn-secondary:hover {
+            background: #eee;
+        }
+        
+        /* شريط التنقل العلوي */
         header {
             background: #4285F4;
             color: white;
-            padding: 20px;
-            text-align: center;
+            padding: 15px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
         
-        .app-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-        
-        .content {
-            padding: 25px;
-        }
-        
-        .tabs {
+        .header-content {
             display: flex;
-            margin-bottom: 20px;
-            background: #f0f5ff;
-            border-radius: 8px;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .search-bar {
+            flex: 1;
+            max-width: 500px;
+            margin: 0 20px;
+            position: relative;
+        }
+        
+        .search-bar input {
+            width: 100%;
+            padding: 10px 15px 10px 35px;
+            border-radius: 30px;
+            border: none;
+            font-size: 16px;
+        }
+        
+        .search-bar i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
+        }
+        
+        .user-actions a {
+            color: white;
+            margin-left: 15px;
+            text-decoration: none;
+            font-size: 1.2rem;
+        }
+        
+        /* شريط التصفح السفلي */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            z-index: 100;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #777;
+            font-size: 0.8rem;
+            flex: 1;
+            transition: color 0.3s;
+        }
+        
+        .nav-item.active, .nav-item:hover {
+            color: #4285F4;
+        }
+        
+        .nav-item i {
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+        }
+        
+        .nav-item-center {
+            background: #4285F4;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: -30px;
+            box-shadow: 0 4px 10px rgba(66, 133, 244, 0.3);
+        }
+        
+        .nav-item-center i {
+            font-size: 1.5rem;
+            margin-bottom: 0;
+        }
+        
+        /* المنتجات */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .product-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .product-image {
+            height: 180px;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             overflow: hidden;
         }
         
-        .tab {
-            flex: 1;
-            padding: 12px;
-            text-align: center;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-            color: #555;
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         
-        .tab.active {
+        .product-info {
+            padding: 15px;
+        }
+        
+        .product-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+            color: #333;
+            height: 40px;
+            overflow: hidden;
+        }
+        
+        .product-price {
+            font-weight: bold;
+            color: #e74c3c;
+            font-size: 1.2rem;
+            margin: 10px 0;
+        }
+        
+        .product-location {
+            display: flex;
+            align-items: center;
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+        
+        .product-location i {
+            margin-left: 5px;
+        }
+        
+        /* صفحة تفاصيل المنتج */
+        .detail-header {
+            display: flex;
+            margin-bottom: 20px;
+            gap: 20px;
+        }
+        
+        .detail-image {
+            flex: 1;
+            background: #f8f9fa;
+            border-radius: 10px;
+            overflow: hidden;
+            max-height: 400px;
+        }
+        
+        .detail-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .detail-info {
+            flex: 1;
+        }
+        
+        .detail-title {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .detail-price {
+            font-size: 1.5rem;
+            color: #e74c3c;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        .detail-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            white-space: pre-line;
+        }
+        
+        .seller-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .seller-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .seller-details {
+            display: flex;
+            align-items: center;
+        }
+        
+        .seller-avatar {
+            width: 50px;
+            height: 50px;
             background: #4285F4;
             color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-left: 15px;
         }
         
-        .form {
+        .seller-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        /* نموذج تسجيل الدخول */
+        .modal {
             display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
         }
         
-        .form.active {
-            display: block;
+        .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 400px;
+            border-radius: 10px;
+            overflow: hidden;
+            animation: modalOpen 0.3s;
+        }
+        
+        @keyframes modalOpen {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .modal-header {
+            background: #4285F4;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .modal-body {
+            padding: 20px;
         }
         
         .form-group {
             margin-bottom: 15px;
         }
         
-        label {
+        .form-group label {
             display: block;
-            margin-bottom: 6px;
-            font-weight: 600;
-            color: #333;
+            margin-bottom: 5px;
+            font-weight: 500;
         }
         
-        input {
+        .form-group input, 
+        .form-group textarea,
+        .form-group select {
             width: 100%;
-            padding: 12px;
+            padding: 10px;
             border: 1px solid #ddd;
-            border-radius: 8px;
+            border-radius: 5px;
             font-size: 16px;
         }
         
-        input:focus {
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
             border-color: #4285F4;
             outline: none;
         }
         
-        button {
-            width: 100%;
-            padding: 12px;
-            background: #4285F4;
-            color: white;
+        .form-footer {
+            padding: 0 20px 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .btn-modal {
+            padding: 10px;
             border: none;
-            border-radius: 8px;
+            border-radius: 5px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            margin-top: 10px;
-        }
-        
-        .google-btn {
-            background: white;
-            color: #555;
-            border: 1px solid #ddd;
-        }
-        
-        .or-divider {
-            text-align: center;
-            margin: 15px 0;
-            position: relative;
-            color: #777;
-        }
-        
-        .or-divider::before,
-        .or-divider::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            width: 40%;
-            height: 1px;
-            background: #ddd;
-        }
-        
-        .or-divider::before {
-            left: 0;
-        }
-        
-        .or-divider::after {
-            right: 0;
-        }
-        
-        .user-info {
-            display: none;
-            text-align: center;
-            padding: 25px;
-        }
-        
-        .welcome-message {
-            font-size: 1.5rem;
-            color: #333;
-            margin-bottom: 20px;
-            font-weight: 600;
-        }
-        
-        .user-details {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            border: 1px solid #eee;
-            margin-bottom: 20px;
-        }
-        
-        .user-name {
-            font-size: 1.3rem;
-            color: #4285F4;
             margin-bottom: 10px;
         }
         
-        .user-email {
-            font-size: 1rem;
-            color: #555;
+        .btn-submit {
+            background: #4285F4;
+            color: white;
         }
         
-        .error-message {
-            background: #ffebee;
-            color: #c62828;
-            padding: 10px;
+        .btn-close {
+            background: #f8f9fa;
+            color: #333;
+        }
+        
+        /* إضافة منتج */
+        .image-upload {
+            margin-bottom: 20px;
+        }
+        
+        .image-preview {
+            width: 100%;
+            height: 200px;
+            background: #f8f9fa;
             border-radius: 8px;
-            margin-top: 15px;
-            display: none;
-            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 10px;
+            overflow: hidden;
+            position: relative;
         }
         
-        footer {
-            background: #f5f5f5;
-            color: #666;
+        .image-preview img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        
+        .image-preview .placeholder {
+            color: #999;
+            font-size: 5rem;
+        }
+        
+        .upload-btn {
+            display: inline-block;
+            padding: 8px 15px;
+            background: #f0f0f0;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            border: 1px solid #ddd;
             text-align: center;
-            padding: 15px;
-            font-size: 0.9rem;
+        }
+        
+        .upload-btn i {
+            margin-left: 5px;
+        }
+        
+        /* رسائل التنبيه */
+        .alert {
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            display: none;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        /* صفحة المستخدم */
+        .user-profile {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            background: #4285F4;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-left: 20px;
+        }
+        
+        .user-info {
+            flex: 1;
+        }
+        
+        .user-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .user-email {
+            color: #666;
+        }
+        
+        /* التجاوب */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-wrap: wrap;
+            }
+            
+            .logo {
+                order: 1;
+                margin-bottom: 10px;
+            }
+            
+            .search-bar {
+                order: 3;
+                margin: 10px 0 0;
+                max-width: 100%;
+            }
+            
+            .user-actions {
+                order: 2;
+            }
+            
+            .detail-header {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- الهيدر -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">سوق الإلكترونيات</div>
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="search-input" placeholder="ابحث عن منتج...">
+                </div>
+                <div class="user-actions">
+                    <a href="#" id="cart-link"><i class="fas fa-shopping-cart"></i></a>
+                    <a href="#" id="user-link"><i class="fas fa-user"></i></a>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- المحتوى الرئيسي -->
     <div class="container">
-        <header>
-            <h1 class="app-title">نظام تسجيل الدخول المبسط</h1>
-        </header>
+        <!-- الصفحة الرئيسية -->
+        <div id="home-page">
+            <div class="section">
+                <h2 class="section-title"><i class="fas fa-star"></i> أحدث المنتجات</h2>
+                <div class="products-grid" id="products-container">
+                    <!-- سيتم إضافة المنتجات من Firebase -->
+                </div>
+            </div>
+        </div>
         
-        <div class="content">
-            <!-- قسم تسجيل الدخول -->
-            <div id="auth-forms">
-                <div class="tabs">
-                    <div class="tab active" data-tab="login">تسجيل الدخول</div>
-                    <div class="tab" data-tab="register">إنشاء حساب</div>
+        <!-- صفحة تفاصيل المنتج -->
+        <div id="product-detail-page" class="section" style="display:none">
+            <div class="detail-header">
+                <div class="detail-image">
+                    <img id="detail-image" src="" alt="صورة المنتج">
+                </div>
+                <div class="detail-info">
+                    <h2 class="detail-title" id="detail-title"></h2>
+                    <div class="detail-price" id="detail-price"></div>
+                    <div class="detail-description" id="detail-description"></div>
+                    
+                    <div class="seller-info">
+                        <div class="seller-title">معلومات البائع</div>
+                        <div class="seller-details">
+                            <div class="seller-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div>
+                                <div class="seller-name" id="seller-name"></div>
+                                <div class="product-location" id="seller-location"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-primary" id="back-to-products" style="margin-top: 20px">
+                        <i class="fas fa-arrow-right"></i> العودة للمنتجات
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- صفحة إضافة منتج -->
+        <div id="add-product-page" class="section" style="display:none">
+            <h2 class="section-title"><i class="fas fa-plus-circle"></i> إضافة منتج جديد</h2>
+            
+            <div class="alert" id="add-product-alert"></div>
+            
+            <form id="add-product-form">
+                <div class="form-group">
+                    <label for="product-name">اسم المنتج</label>
+                    <input type="text" id="product-name" placeholder="اسم المنتج" required>
                 </div>
                 
-                <!-- نموذج تسجيل الدخول -->
-                <div class="form active" id="login-form">
+                <div class="form-group">
+                    <label for="product-price">السعر (ريال سعودي)</label>
+                    <input type="number" id="product-price" placeholder="سعر المنتج" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="product-description">وصف المنتج</label>
+                    <textarea id="product-description" rows="4" placeholder="وصف مفصل للمنتج" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="product-category">التصنيف</label>
+                    <select id="product-category" required>
+                        <option value="">اختر تصنيف</option>
+                        <option value="هواتف">هواتف</option>
+                        <option value="لابتوبات">لابتوبات</option>
+                        <option value="أجهزة لوحية">أجهزة لوحية</option>
+                        <option value="كاميرات">كاميرات</option>
+                        <option value="أجهزة منزلية">أجهزة منزلية</option>
+                        <option value="ملحقات">ملحقات</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="product-location">الموقع (المدينة)</label>
+                    <input type="text" id="product-location" placeholder="مدينتك" required>
+                </div>
+                
+                <div class="form-group image-upload">
+                    <label>صورة المنتج</label>
+                    <div class="image-preview" id="image-preview">
+                        <div class="placeholder"><i class="fas fa-camera"></i></div>
+                    </div>
+                    <label class="upload-btn" for="product-image">
+                        <i class="fas fa-upload"></i> اختر صورة
+                    </label>
+                    <input type="file" id="product-image" accept="image/*" style="display:none" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-modal">
+                    <i class="fas fa-plus"></i> إضافة المنتج
+                </button>
+            </form>
+        </div>
+        
+        <!-- صفحة المستخدم -->
+        <div id="user-page" class="section" style="display:none">
+            <div class="user-profile">
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-info">
+                    <div class="user-name" id="user-display-name"></div>
+                    <div class="user-email" id="user-email"></div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2 class="section-title"><i class="fas fa-box"></i> منتجاتي</h2>
+                <div class="products-grid" id="user-products-container">
+                    <!-- سيتم إضافة منتجات المستخدم هنا -->
+                </div>
+            </div>
+            
+            <button class="btn btn-secondary" id="logout-btn" style="width:100%">
+                <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
+            </button>
+        </div>
+    </div>
+    
+    <!-- شريط التصفح السفلي -->
+    <div class="bottom-nav">
+        <a href="#" class="nav-item" id="nav-home">
+            <i class="fas fa-home"></i>
+            <span>الرئيسية</span>
+        </a>
+        <a href="#" class="nav-item" id="nav-categories">
+            <i class="fas fa-list"></i>
+            <span>التصنيفات</span>
+        </a>
+        <a href="#" class="nav-item nav-item-center" id="nav-add">
+            <i class="fas fa-plus"></i>
+        </a>
+        <a href="#" class="nav-item" id="nav-favorites">
+            <i class="fas fa-heart"></i>
+            <span>المفضلة</span>
+        </a>
+        <a href="#" class="nav-item" id="nav-user">
+            <i class="fas fa-user"></i>
+            <span>حسابي</span>
+        </a>
+    </div>
+    
+    <!-- نماذج المصادقة -->
+    <div class="modal" id="auth-modal">
+        <div class="modal-content">
+            <div class="modal-header" id="auth-modal-title">تسجيل الدخول</div>
+            <div class="modal-body">
+                <div class="alert" id="auth-alert"></div>
+                
+                <div id="login-form">
                     <div class="form-group">
                         <label for="login-email">البريد الإلكتروني</label>
-                        <input type="email" id="login-email" placeholder="ادخل بريدك الإلكتروني" required>
+                        <input type="email" id="login-email" placeholder="ادخل بريدك الإلكتروني">
                     </div>
                     
                     <div class="form-group">
                         <label for="login-password">كلمة المرور</label>
-                        <input type="password" id="login-password" placeholder="ادخل كلمة المرور" required>
+                        <input type="password" id="login-password" placeholder="ادخل كلمة المرور">
                     </div>
                     
-                    <button id="login-btn">تسجيل الدخول</button>
-                    
-                    <div class="or-divider">أو</div>
-                    
-                    <button class="google-btn" id="google-login">تسجيل الدخول بحساب جوجل</button>
-                    
-                    <div class="error-message" id="login-error"></div>
+                    <button class="btn btn-submit btn-modal" id="login-btn">تسجيل الدخول</button>
+                    <button class="btn btn-secondary btn-modal" id="switch-to-register">إنشاء حساب جديد</button>
                 </div>
                 
-                <!-- نموذج إنشاء حساب جديد -->
-                <div class="form" id="register-form">
+                <div id="register-form" style="display:none">
                     <div class="form-group">
                         <label for="register-name">الاسم الكامل</label>
-                        <input type="text" id="register-name" placeholder="ادخل اسمك الكامل" required>
+                        <input type="text" id="register-name" placeholder="الاسم الكامل">
                     </div>
                     
                     <div class="form-group">
                         <label for="register-email">البريد الإلكتروني</label>
-                        <input type="email" id="register-email" placeholder="ادخل بريدك الإلكتروني" required>
+                        <input type="email" id="register-email" placeholder="ادخل بريدك الإلكتروني">
                     </div>
                     
                     <div class="form-group">
-                        <label for="register-password">كلمة المرور</label>
-                        <input type="password" id="register-password" placeholder="6+ أحرف على الأقل" required>
+                        <label for="register-password">كلمة المرور (6 أحرف على الأقل)</label>
+                        <input type="password" id="register-password" placeholder="كلمة المرور">
                     </div>
                     
                     <div class="form-group">
-                        <label for="register-confirm">تأكيد كلمة المرور</label>
-                        <input type="password" id="register-confirm" placeholder="أعد إدخال كلمة المرور" required>
+                        <label for="register-phone">رقم الجوال</label>
+                        <input type="tel" id="register-phone" placeholder="05XXXXXXXX">
                     </div>
                     
-                    <button id="register-btn">إنشاء حساب جديد</button>
-                    
-                    <div class="error-message" id="register-error"></div>
+                    <button class="btn btn-submit btn-modal" id="register-btn">إنشاء حساب</button>
+                    <button class="btn btn-secondary btn-modal" id="switch-to-login">لديك حساب؟ تسجيل الدخول</button>
                 </div>
             </div>
-            
-            <!-- معلومات المستخدم بعد تسجيل الدخول -->
-            <div class="user-info" id="user-info">
-                <h2 class="welcome-message">مرحباً بك في حسابك</h2>
-                
-                <div class="user-details">
-                    <div class="user-name" id="display-name"></div>
-                    <div class="user-email" id="display-email"></div>
-                </div>
-                
-                <button id="logout-btn">تسجيل الخروج</button>
+            <div class="form-footer">
+                <button class="btn btn-close btn-modal" id="close-auth">إغلاق</button>
             </div>
         </div>
-        
-        <footer>
-            <p>جميع الحقوق محفوظة &copy; 2023</p>
-        </footer>
     </div>
-
+    
     <script>
         // تهيئة Firebase
         const firebaseConfig = {
@@ -295,172 +785,418 @@
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const database = firebase.database();
+        const storage = firebase.storage();
         
         // عناصر الواجهة
-        const authForms = document.getElementById('auth-forms');
+        const authModal = document.getElementById('auth-modal');
+        const authModalTitle = document.getElementById('auth-modal-title');
+        const authAlert = document.getElementById('auth-alert');
         const loginForm = document.getElementById('login-form');
         const registerForm = document.getElementById('register-form');
-        const userInfo = document.getElementById('user-info');
         const loginBtn = document.getElementById('login-btn');
         const registerBtn = document.getElementById('register-btn');
-        const googleLoginBtn = document.getElementById('google-login');
+        const switchToRegister = document.getElementById('switch-to-register');
+        const switchToLogin = document.getElementById('switch-to-login');
+        const closeAuth = document.getElementById('close-auth');
+        const userLink = document.getElementById('user-link');
+        const navUser = document.getElementById('nav-user');
         const logoutBtn = document.getElementById('logout-btn');
-        const loginError = document.getElementById('login-error');
-        const registerError = document.getElementById('register-error');
-        const tabs = document.querySelectorAll('.tab');
-        const displayName = document.getElementById('display-name');
-        const displayEmail = document.getElementById('display-email');
+        const productsContainer = document.getElementById('products-container');
+        const userProductsContainer = document.getElementById('user-products-container');
+        const homePage = document.getElementById('home-page');
+        const productDetailPage = document.getElementById('product-detail-page');
+        const userPage = document.getElementById('user-page');
+        const addProductPage = document.getElementById('add-product-page');
+        const backToProducts = document.getElementById('back-to-products');
+        const navHome = document.getElementById('nav-home');
+        const navAdd = document.getElementById('nav-add');
+        const addProductForm = document.getElementById('add-product-form');
+        const addProductAlert = document.getElementById('add-product-alert');
+        const imagePreview = document.getElementById('image-preview');
+        const productImageInput = document.getElementById('product-image');
+        const userDisplayName = document.getElementById('user-display-name');
+        const userEmail = document.getElementById('user-email');
         
-        // التبديل بين التبويبات
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                tabs.forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                
-                const tabId = tab.getAttribute('data-tab');
-                loginForm.classList.toggle('active', tabId === 'login');
-                registerForm.classList.toggle('active', tabId === 'register');
-            });
+        // حالات التطبيق
+        let currentUser = null;
+        let selectedProduct = null;
+        
+        // تهيئة الصفحة عند التحميل
+        window.addEventListener('load', function() {
+            loadProducts();
+            initAuth();
+            setupEventListeners();
         });
         
-        // تسجيل الدخول بالبريد الإلكتروني وكلمة المرور
-        loginBtn.addEventListener('click', () => {
+        // إعداد مستمعات الأحداث
+        function setupEventListeners() {
+            // الروابط
+            userLink.addEventListener('click', showAuthModal);
+            navUser.addEventListener('click', showUserPage);
+            navHome.addEventListener('click', showHomePage);
+            navAdd.addEventListener('click', showAddProductPage);
+            backToProducts.addEventListener('click', showHomePage);
+            logoutBtn.addEventListener('click', logout);
+            
+            // المصادقة
+            switchToRegister.addEventListener('click', showRegisterForm);
+            switchToLogin.addEventListener('click', showLoginForm);
+            loginBtn.addEventListener('click', login);
+            registerBtn.addEventListener('click', register);
+            closeAuth.addEventListener('click', closeAuthModal);
+            
+            // إضافة منتج
+            addProductForm.addEventListener('submit', addProduct);
+            productImageInput.addEventListener('change', handleImageUpload);
+        }
+        
+        // تهيئة نظام المصادقة
+        function initAuth() {
+            auth.onAuthStateChanged((user) => {
+                currentUser = user;
+                
+                if (user) {
+                    // المستخدم مسجل
+                    userLink.innerHTML = '<i class="fas fa-user-check"></i>';
+                    navUser.innerHTML = '<i class="fas fa-user-check"></i><span>حسابي</span>';
+                    
+                    // تحديث معلومات المستخدم
+                    userDisplayName.textContent = user.displayName || user.email.split('@')[0];
+                    userEmail.textContent = user.email;
+                    
+                    // تحميل منتجات المستخدم
+                    loadUserProducts();
+                } else {
+                    // المستخدم غير مسجل
+                    userLink.innerHTML = '<i class="fas fa-user"></i>';
+                    navUser.innerHTML = '<i class="fas fa-user"></i><span>حسابي</span>';
+                    userProductsContainer.innerHTML = '';
+                }
+            });
+        }
+        
+        // تحميل المنتجات من قاعدة البيانات
+        function loadProducts() {
+            const productsRef = database.ref('products');
+            productsRef.on('value', (snapshot) => {
+                productsContainer.innerHTML = '';
+                
+                snapshot.forEach((childSnapshot) => {
+                    const product = childSnapshot.val();
+                    product.id = childSnapshot.key;
+                    
+                    const productCard = createProductCard(product);
+                    productsContainer.appendChild(productCard);
+                });
+            });
+        }
+        
+        // تحميل منتجات المستخدم
+        function loadUserProducts() {
+            if (!currentUser) return;
+            
+            const userProductsRef = database.ref('products').orderByChild('userId').equalTo(currentUser.uid);
+            userProductsRef.on('value', (snapshot) => {
+                userProductsContainer.innerHTML = '';
+                
+                if (!snapshot.exists()) {
+                    userProductsContainer.innerHTML = '<div class="alert alert-info">لا توجد منتجات مضافة بعد</div>';
+                    return;
+                }
+                
+                snapshot.forEach((childSnapshot) => {
+                    const product = childSnapshot.val();
+                    product.id = childSnapshot.key;
+                    
+                    const productCard = createProductCard(product, true);
+                    userProductsContainer.appendChild(productCard);
+                });
+            });
+        }
+        
+        // إنشاء بطاقة منتج
+        function createProductCard(product, isUserProduct = false) {
+            const productCard = document.createElement('div');
+            productCard.className = 'product-card';
+            
+            productCard.innerHTML = `
+                <div class="product-image">
+                    <img src="${product.imageUrl || 'https://via.placeholder.com/300'}" alt="${product.name}">
+                </div>
+                <div class="product-info">
+                    <h3 class="product-title">${product.name}</h3>
+                    <div class="product-price">${product.price} ريال</div>
+                    <div class="product-location">
+                        <i class="fas fa-map-marker-alt"></i>
+                        ${product.location}
+                    </div>
+                    <div class="product-actions" style="margin-top: 10px">
+                        <button class="btn btn-primary" data-id="${product.id}">تفاصيل</button>
+                    </div>
+                </div>
+            `;
+            
+            // إضافة حدث لعرض التفاصيل
+            const detailsBtn = productCard.querySelector('button');
+            detailsBtn.addEventListener('click', () => showProductDetails(product));
+            
+            return productCard;
+        }
+        
+        // عرض تفاصيل المنتج
+        function showProductDetails(product) {
+            selectedProduct = product;
+            
+            document.getElementById('detail-title').textContent = product.name;
+            document.getElementById('detail-price').textContent = product.price + ' ريال';
+            document.getElementById('detail-description').textContent = product.description;
+            document.getElementById('seller-name').textContent = product.sellerName || 'مستخدم';
+            document.getElementById('seller-location').textContent = product.location;
+            
+            const detailImage = document.getElementById('detail-image');
+            detailImage.src = product.imageUrl || 'https://via.placeholder.com/600';
+            detailImage.alt = product.name;
+            
+            homePage.style.display = 'none';
+            productDetailPage.style.display = 'block';
+        }
+        
+        // عرض الصفحة الرئيسية
+        function showHomePage(e) {
+            if (e) e.preventDefault();
+            
+            homePage.style.display = 'block';
+            productDetailPage.style.display = 'none';
+            userPage.style.display = 'none';
+            addProductPage.style.display = 'none';
+        }
+        
+        // عرض صفحة المستخدم
+        function showUserPage(e) {
+            if (e) e.preventDefault();
+            
+            if (!currentUser) {
+                showAuthModal();
+                return;
+            }
+            
+            homePage.style.display = 'none';
+            productDetailPage.style.display = 'none';
+            userPage.style.display = 'block';
+            addProductPage.style.display = 'none';
+        }
+        
+        // عرض صفحة إضافة منتج
+        function showAddProductPage(e) {
+            if (e) e.preventDefault();
+            
+            if (!currentUser) {
+                showAuthModal();
+                return;
+            }
+            
+            homePage.style.display = 'none';
+            productDetailPage.style.display = 'none';
+            userPage.style.display = 'none';
+            addProductPage.style.display = 'block';
+        }
+        
+        // عرض نموذج المصادقة
+        function showAuthModal(e) {
+            if (e) e.preventDefault();
+            
+            if (currentUser) {
+                showUserPage();
+                return;
+            }
+            
+            showLoginForm();
+            authModal.style.display = 'flex';
+        }
+        
+        // إغلاق نموذج المصادقة
+        function closeAuthModal() {
+            authModal.style.display = 'none';
+            clearAuthForm();
+        }
+        
+        // عرض نموذج تسجيل الدخول
+        function showLoginForm() {
+            authModalTitle.textContent = 'تسجيل الدخول';
+            loginForm.style.display = 'block';
+            registerForm.style.display = 'none';
+            clearAuthForm();
+        }
+        
+        // عرض نموذج التسجيل
+        function showRegisterForm() {
+            authModalTitle.textContent = 'إنشاء حساب جديد';
+            loginForm.style.display = 'none';
+            registerForm.style.display = 'block';
+            clearAuthForm();
+        }
+        
+        // مسح حقول المصادقة
+        function clearAuthForm() {
+            document.getElementById('login-email').value = '';
+            document.getElementById('login-password').value = '';
+            document.getElementById('register-name').value = '';
+            document.getElementById('register-email').value = '';
+            document.getElementById('register-password').value = '';
+            document.getElementById('register-phone').value = '';
+            authAlert.style.display = 'none';
+        }
+        
+        // تسجيل الدخول
+        function login() {
             const email = document.getElementById('login-email').value;
             const password = document.getElementById('login-password').value;
             
-            loginError.style.display = 'none';
+            if (!email || !password) {
+                showAuthAlert('يرجى ملء جميع الحقول', 'error');
+                return;
+            }
             
             auth.signInWithEmailAndPassword(email, password)
-                .then((userCredential) => {
-                    const user = userCredential.user;
-                    showUserInfo(user);
+                .then(() => {
+                    closeAuthModal();
+                    showUserPage();
                 })
                 .catch((error) => {
-                    showError(loginError, error.message);
+                    showAuthAlert('خطأ في تسجيل الدخول: ' + error.message, 'error');
                 });
-        });
+        }
         
         // إنشاء حساب جديد
-        registerBtn.addEventListener('click', () => {
+        function register() {
             const name = document.getElementById('register-name').value;
             const email = document.getElementById('register-email').value;
             const password = document.getElementById('register-password').value;
-            const confirmPassword = document.getElementById('register-confirm').value;
+            const phone = document.getElementById('register-phone').value;
             
-            registerError.style.display = 'none';
-            
-            if (password !== confirmPassword) {
-                showError(registerError, 'كلمتا المرور غير متطابقتين');
+            if (!name || !email || !password || !phone) {
+                showAuthAlert('يرجى ملء جميع الحقول', 'error');
                 return;
             }
             
             if (password.length < 6) {
-                showError(registerError, 'كلمة المرور يجب أن تكون 6 أحرف على الأقل');
+                showAuthAlert('كلمة المرور يجب أن تكون 6 أحرف على الأقل', 'error');
                 return;
             }
             
             auth.createUserWithEmailAndPassword(email, password)
                 .then((userCredential) => {
-                    const user = userCredential.user;
-                    saveUserData(user.uid, name, email);
-                    showUserInfo(user);
+                    // تحديث معلومات المستخدم
+                    return userCredential.user.updateProfile({
+                        displayName: name
+                    });
+                })
+                .then(() => {
+                    // حفظ معلومات إضافية للمستخدم
+                    const userRef = database.ref('users/' + auth.currentUser.uid);
+                    userRef.set({
+                        name: name,
+                        email: email,
+                        phone: phone,
+                        createdAt: new Date().toISOString()
+                    });
+                    
+                    closeAuthModal();
+                    showUserPage();
                 })
                 .catch((error) => {
-                    showError(registerError, error.message);
+                    showAuthAlert('خطأ في إنشاء الحساب: ' + error.message, 'error');
                 });
-        });
-        
-        // تسجيل الدخول بحساب جوجل
-        googleLoginBtn.addEventListener('click', () => {
-            const provider = new firebase.auth.GoogleAuthProvider();
-            
-            auth.signInWithPopup(provider)
-                .then((result) => {
-                    const user = result.user;
-                    const name = user.displayName || user.email.split('@')[0];
-                    saveUserData(user.uid, name, user.email);
-                    showUserInfo(user);
-                })
-                .catch((error) => {
-                    showError(loginError, error.message);
-                });
-        });
+        }
         
         // تسجيل الخروج
-        logoutBtn.addEventListener('click', () => {
+        function logout() {
             auth.signOut().then(() => {
-                userInfo.style.display = 'none';
-                authForms.style.display = 'block';
-                tabs[0].click();
-                
-                // إعادة تعيين حقول النموذج
-                document.getElementById('login-email').value = '';
-                document.getElementById('login-password').value = '';
-                document.getElementById('register-name').value = '';
-                document.getElementById('register-email').value = '';
-                document.getElementById('register-password').value = '';
-                document.getElementById('register-confirm').value = '';
-            });
-        });
-        
-        // حفظ بيانات المستخدم في قاعدة البيانات
-        function saveUserData(uid, name, email) {
-            const userRef = database.ref('users/' + uid);
-            
-            userRef.once('value').then((snapshot) => {
-                const userData = {
-                    name: name,
-                    email: email,
-                    lastLogin: new Date().toISOString()
-                };
-                
-                if (!snapshot.exists()) {
-                    userData.createdAt = new Date().toISOString();
-                    userData.loginCount = 1;
-                    userRef.set(userData);
-                } else {
-                    const currentData = snapshot.val();
-                    userData.loginCount = (currentData.loginCount || 0) + 1;
-                    userRef.update(userData);
-                }
+                showHomePage();
             });
         }
         
-        // إظهار معلومات المستخدم
-        function showUserInfo(user) {
-            authForms.style.display = 'none';
-            userInfo.style.display = 'block';
+        // إضافة منتج جديد
+        function addProduct(e) {
+            e.preventDefault();
             
-            // عرض الاسم والبريد الإلكتروني
-            const userRef = database.ref('users/' + user.uid);
-            
-            userRef.once('value').then((snapshot) => {
-                const userData = snapshot.val();
-                
-                if (userData && userData.name) {
-                    displayName.textContent = userData.name;
-                } else {
-                    displayName.textContent = user.displayName || user.email.split('@')[0];
-                }
-                
-                displayEmail.textContent = user.email;
-            });
-        }
-        
-        // التحقق من حالة المصادقة عند تحميل الصفحة
-        auth.onAuthStateChanged((user) => {
-            if (user) {
-                showUserInfo(user);
-            } else {
-                userInfo.style.display = 'none';
-                authForms.style.display = 'block';
+            if (!currentUser) {
+                showAuthModal();
+                return;
             }
-        });
+            
+            const name = document.getElementById('product-name').value;
+            const price = document.getElementById('product-price').value;
+            const description = document.getElementById('product-description').value;
+            const category = document.getElementById('product-category').value;
+            const location = document.getElementById('product-location').value;
+            const imageFile = productImageInput.files[0];
+            
+            if (!name || !price || !description || !category || !location || !imageFile) {
+                showAddProductAlert('يرجى ملء جميع الحقول', 'error');
+                return;
+            }
+            
+            // رفع الصورة إلى Firebase Storage
+            const storageRef = storage.ref();
+            const imageRef = storageRef.child('products/' + Date.now() + '_' + imageFile.name);
+            
+            imageRef.put(imageFile).then((snapshot) => {
+                return snapshot.ref.getDownloadURL();
+            }).then((downloadURL) => {
+                // حفظ بيانات المنتج في قاعدة البيانات
+                const productsRef = database.ref('products');
+                const newProductRef = productsRef.push();
+                
+                newProductRef.set({
+                    name: name,
+                    price: price,
+                    description: description,
+                    category: category,
+                    location: location,
+                    imageUrl: downloadURL,
+                    userId: currentUser.uid,
+                    sellerName: currentUser.displayName || currentUser.email.split('@')[0],
+                    createdAt: new Date().toISOString()
+                }).then(() => {
+                    showAddProductAlert('تمت إضافة المنتج بنجاح!', 'success');
+                    addProductForm.reset();
+                    imagePreview.innerHTML = '<div class="placeholder"><i class="fas fa-camera"></i></div>';
+                });
+            }).catch((error) => {
+                showAddProductAlert('خطأ في رفع الصورة: ' + error.message, 'error');
+            });
+        }
         
-        // مساعد: عرض رسالة خطأ
-        function showError(element, message) {
-            element.textContent = message;
-            element.style.display = 'block';
+        // معالجة رفع الصورة
+        function handleImageUpload() {
+            const file = productImageInput.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                imagePreview.innerHTML = `<img src="${e.target.result}" alt="معاينة الصورة">`;
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        // عرض تنبيهات المصادقة
+        function showAuthAlert(message, type) {
+            authAlert.textContent = message;
+            authAlert.className = `alert alert-${type}`;
+            authAlert.style.display = 'block';
+        }
+        
+        // عرض تنبيهات إضافة المنتج
+        function showAddProductAlert(message, type) {
+            addProductAlert.textContent = message;
+            addProductAlert.className = `alert alert-${type}`;
+            addProductAlert.style.display = 'block';
+            
+            // إخفاء التنبيه بعد 3 ثواني
+            setTimeout(() => {
+                addProductAlert.style.display = 'none';
+            }, 3000);
         }
     </script>
 </body>
