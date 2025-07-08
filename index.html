@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام تسجيل الدخول المتقدم</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>نظام تسجيل الدخول المبسط</title>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
@@ -17,7 +16,7 @@
         }
         
         body {
-            background: linear-gradient(135deg, #1a2a6c, #2c3e50);
+            background: #f5f8fa;
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -27,111 +26,54 @@
         
         .container {
             width: 100%;
-            max-width: 1200px;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             overflow: hidden;
-            display: flex;
-            flex-direction: column;
         }
         
         header {
-            background: linear-gradient(to right, #1a2a6c, #3a7bd5);
+            background: #4285F4;
             color: white;
-            padding: 25px;
+            padding: 20px;
             text-align: center;
-            position: relative;
-        }
-        
-        .logo {
-            font-size: 2.8rem;
-            margin-bottom: 15px;
-            color: #fdbb2d;
         }
         
         .app-title {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-        
-        .app-description {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            max-width: 800px;
-            margin: 0 auto;
-            line-height: 1.6;
+            font-size: 1.5rem;
+            font-weight: 600;
         }
         
         .content {
-            display: flex;
-            min-height: 600px;
-        }
-        
-        .auth-forms {
-            flex: 1;
-            padding: 35px;
-            background: white;
-            display: flex;
-            flex-direction: column;
-            transition: all 0.5s ease;
-        }
-        
-        .form-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .form-title {
-            font-size: 1.9rem;
-            color: #1a2a6c;
-            margin-bottom: 25px;
-            text-align: center;
-            padding-bottom: 15px;
-            border-bottom: 3px solid #fdbb2d;
-            position: relative;
-        }
-        
-        .form-title::after {
-            content: '';
-            position: absolute;
-            bottom: -3px;
-            left: 40%;
-            width: 20%;
-            height: 3px;
-            background: #b21f1f;
+            padding: 25px;
         }
         
         .tabs {
             display: flex;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             background: #f0f5ff;
-            border-radius: 50px;
+            border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
         }
         
         .tab {
             flex: 1;
-            padding: 16px;
+            padding: 12px;
             text-align: center;
             cursor: pointer;
             font-weight: 600;
-            transition: all 0.4s ease;
+            transition: all 0.3s;
             color: #555;
         }
         
         .tab.active {
-            background: linear-gradient(to right, #1a2a6c, #3a7bd5);
+            background: #4285F4;
             color: white;
-            box-shadow: 0 4px 12px rgba(26, 42, 108, 0.3);
         }
         
         .form {
             display: none;
-            animation: fadeIn 0.5s;
         }
         
         .form.active {
@@ -139,89 +81,52 @@
         }
         
         .form-group {
-            margin-bottom: 25px;
-            position: relative;
+            margin-bottom: 15px;
         }
         
         label {
             display: block;
-            margin-bottom: 10px;
+            margin-bottom: 6px;
             font-weight: 600;
-            color: #2c3e50;
-            font-size: 1.1rem;
+            color: #333;
         }
         
         input {
             width: 100%;
-            padding: 16px;
-            border: 2px solid #ddd;
-            border-radius: 12px;
-            font-size: 17px;
-            transition: all 0.3s;
-            background: #f9fbfd;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
         }
         
         input:focus {
-            border-color: #3a7bd5;
+            border-color: #4285F4;
             outline: none;
-            box-shadow: 0 0 0 3px rgba(58, 123, 213, 0.2);
-            background: white;
-        }
-        
-        .input-icon {
-            position: absolute;
-            right: 15px;
-            top: 42px;
-            color: #777;
-            font-size: 18px;
         }
         
         button {
             width: 100%;
-            padding: 16px;
-            background: linear-gradient(to right, #1a2a6c, #3a7bd5);
+            padding: 12px;
+            background: #4285F4;
             color: white;
             border: none;
-            border-radius: 12px;
-            font-size: 18px;
+            border-radius: 8px;
+            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 15px;
-            box-shadow: 0 4px 15px rgba(26, 42, 108, 0.3);
-        }
-        
-        button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 7px 20px rgba(26, 42, 108, 0.4);
+            margin-top: 10px;
         }
         
         .google-btn {
             background: white;
             color: #555;
-            border: 2px solid #ddd;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-        }
-        
-        .google-btn:hover {
-            border-color: #4285F4;
-            transform: translateY(-3px);
-        }
-        
-        .google-btn i {
-            color: #4285F4;
-            font-size: 26px;
-            margin-left: 12px;
+            border: 1px solid #ddd;
         }
         
         .or-divider {
             text-align: center;
-            margin: 25px 0;
+            margin: 15px 0;
             position: relative;
-            font-weight: 600;
             color: #777;
         }
         
@@ -230,9 +135,9 @@
             content: '';
             position: absolute;
             top: 50%;
-            width: 42%;
-            height: 2px;
-            background: linear-gradient(to right, #ddd, #fff);
+            width: 40%;
+            height: 1px;
+            background: #ddd;
         }
         
         .or-divider::before {
@@ -243,458 +148,169 @@
             right: 0;
         }
         
-        .user-dashboard {
-            flex: 1;
-            padding: 35px;
-            background: #f8faff;
+        .user-info {
             display: none;
-            flex-direction: column;
+            text-align: center;
+            padding: 25px;
         }
         
         .welcome-message {
-            font-size: 2rem;
-            color: #1a2a6c;
-            margin-bottom: 25px;
-            text-align: center;
-            font-weight: 700;
-        }
-        
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
-            margin-bottom: 30px;
-        }
-        
-        .info-card {
-            background: white;
-            border-radius: 18px;
-            padding: 25px;
-            box-shadow: 0 7px 20px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease;
-        }
-        
-        .info-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
-        }
-        
-        .card-title {
-            font-size: 1.4rem;
-            color: #1a2a6c;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #f0f5ff;
-            display: flex;
-            align-items: center;
-        }
-        
-        .card-title i {
-            margin-left: 10px;
-            color: #3a7bd5;
-        }
-        
-        .info-item {
-            margin-bottom: 15px;
-            display: flex;
-            align-items: flex-start;
-        }
-        
-        .info-label {
-            font-weight: 600;
-            color: #2c3e50;
-            min-width: 140px;
-        }
-        
-        .info-value {
-            color: #555;
-            flex: 1;
-            word-break: break-word;
-        }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            margin-top: 20px;
-        }
-        
-        .stat-card {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-        }
-        
-        .stat-value {
-            font-size: 2.2rem;
-            font-weight: 700;
-            color: #1a2a6c;
-            margin: 10px 0;
-        }
-        
-        .stat-label {
-            color: #777;
-            font-size: 1rem;
-        }
-        
-        .actions {
-            display: flex;
-            gap: 20px;
-            margin-top: 30px;
-        }
-        
-        .action-btn {
-            flex: 1;
-            padding: 16px;
-            border-radius: 12px;
-            text-align: center;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.1rem;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-        }
-        
-        .logout-btn {
-            background: linear-gradient(to right, #b21f1f, #e74c3c);
-            color: white;
-        }
-        
-        .edit-btn {
-            background: linear-gradient(to right, #fdbb2d, #f9d423);
+            font-size: 1.5rem;
             color: #333;
+            margin-bottom: 20px;
+            font-weight: 600;
         }
         
-        .action-btn i {
-            margin-left: 10px;
-            font-size: 1.2rem;
+        .user-details {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid #eee;
+            margin-bottom: 20px;
         }
         
-        .action-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 7px 15px rgba(0, 0, 0, 0.15);
+        .user-name {
+            font-size: 1.3rem;
+            color: #4285F4;
+            margin-bottom: 10px;
+        }
+        
+        .user-email {
+            font-size: 1rem;
+            color: #555;
         }
         
         .error-message {
             background: #ffebee;
             color: #c62828;
-            padding: 16px;
-            border-radius: 12px;
-            margin-top: 20px;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 15px;
             display: none;
-            font-weight: 500;
-            border-left: 4px solid #c62828;
-        }
-        
-        .success-message {
-            background: #e8f5e9;
-            color: #2e7d32;
-            padding: 16px;
-            border-radius: 12px;
-            margin-top: 20px;
-            display: none;
-            font-weight: 500;
-            border-left: 4px solid #2e7d32;
-        }
-        
-        .profile-setup {
-            display: none;
-            padding: 30px;
-            background: #fffde7;
-            border-radius: 15px;
-            margin-top: 20px;
-            border: 2px dashed #f9a825;
-        }
-        
-        .setup-title {
-            font-size: 1.5rem;
-            color: #b21f1f;
-            margin-bottom: 20px;
-            text-align: center;
+            font-size: 0.9rem;
         }
         
         footer {
-            background: #2c3e50;
-            color: white;
+            background: #f5f5f5;
+            color: #666;
             text-align: center;
-            padding: 20px;
-            font-size: 1rem;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        @media (max-width: 900px) {
-            .content {
-                flex-direction: column;
-            }
-            
-            .dashboard-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        @media (max-width: 600px) {
-            .actions {
-                flex-direction: column;
-            }
-            
-            .tabs {
-                flex-direction: column;
-                border-radius: 15px;
-            }
+            padding: 15px;
+            font-size: 0.9rem;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <div class="logo">
-                <i class="fas fa-lock"></i>
-            </div>
-            <h1 class="app-title">نظام إدارة الحسابات المتقدم</h1>
-            <p class="app-description">سجل دخولك أو أنشئ حساب جديد للاستفادة من خدماتنا المتكاملة</p>
+            <h1 class="app-title">نظام تسجيل الدخول المبسط</h1>
         </header>
         
         <div class="content">
-            <div class="auth-forms" id="auth-forms">
-                <div class="form-title">بوابة تسجيل الدخول</div>
-                
+            <!-- قسم تسجيل الدخول -->
+            <div id="auth-forms">
                 <div class="tabs">
                     <div class="tab active" data-tab="login">تسجيل الدخول</div>
-                    <div class="tab" data-tab="register">إنشاء حساب جديد</div>
+                    <div class="tab" data-tab="register">إنشاء حساب</div>
                 </div>
                 
                 <!-- نموذج تسجيل الدخول -->
-                <div class="form-container">
-                    <div class="form active" id="login-form">
-                        <div class="form-group">
-                            <label for="login-email">البريد الإلكتروني</label>
-                            <input type="email" id="login-email" placeholder="ادخل بريدك الإلكتروني" required>
-                            <i class="fas fa-envelope input-icon"></i>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="login-password">كلمة المرور</label>
-                            <input type="password" id="login-password" placeholder="ادخل كلمة المرور" required>
-                            <i class="fas fa-lock input-icon"></i>
-                        </div>
-                        
-                        <button id="login-btn">
-                            <i class="fas fa-sign-in-alt"></i> تسجيل الدخول
-                        </button>
-                        
-                        <div class="or-divider">أو</div>
-                        
-                        <button class="google-btn" id="google-login">
-                            <i class="fab fa-google"></i> تسجيل الدخول بحساب جوجل
-                        </button>
-                        
-                        <div class="error-message" id="login-error"></div>
+                <div class="form active" id="login-form">
+                    <div class="form-group">
+                        <label for="login-email">البريد الإلكتروني</label>
+                        <input type="email" id="login-email" placeholder="ادخل بريدك الإلكتروني" required>
                     </div>
                     
-                    <!-- نموذج إنشاء حساب جديد -->
-                    <div class="form" id="register-form">
-                        <div class="form-group">
-                            <label for="register-name">الاسم الكامل</label>
-                            <input type="text" id="register-name" placeholder="ادخل اسمك الكامل" required>
-                            <i class="fas fa-user input-icon"></i>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="register-email">البريد الإلكتروني</label>
-                            <input type="email" id="register-email" placeholder="ادخل بريدك الإلكتروني" required>
-                            <i class="fas fa-envelope input-icon"></i>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="register-password">كلمة المرور</label>
-                            <input type="password" id="register-password" placeholder="أنشئ كلمة مرور قوية (6+ أحرف)" required>
-                            <i class="fas fa-lock input-icon"></i>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="register-confirm">تأكيد كلمة المرور</label>
-                            <input type="password" id="register-confirm" placeholder="أعد إدخال كلمة المرور" required>
-                            <i class="fas fa-lock input-icon"></i>
-                        </div>
-                        
-                        <button id="register-btn">
-                            <i class="fas fa-user-plus"></i> إنشاء حساب جديد
-                        </button>
-                        
-                        <div class="error-message" id="register-error"></div>
-                        <div class="success-message" id="register-success"></div>
+                    <div class="form-group">
+                        <label for="login-password">كلمة المرور</label>
+                        <input type="password" id="login-password" placeholder="ادخل كلمة المرور" required>
                     </div>
+                    
+                    <button id="login-btn">تسجيل الدخول</button>
+                    
+                    <div class="or-divider">أو</div>
+                    
+                    <button class="google-btn" id="google-login">تسجيل الدخول بحساب جوجل</button>
+                    
+                    <div class="error-message" id="login-error"></div>
+                </div>
+                
+                <!-- نموذج إنشاء حساب جديد -->
+                <div class="form" id="register-form">
+                    <div class="form-group">
+                        <label for="register-name">الاسم الكامل</label>
+                        <input type="text" id="register-name" placeholder="ادخل اسمك الكامل" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="register-email">البريد الإلكتروني</label>
+                        <input type="email" id="register-email" placeholder="ادخل بريدك الإلكتروني" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="register-password">كلمة المرور</label>
+                        <input type="password" id="register-password" placeholder="6+ أحرف على الأقل" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="register-confirm">تأكيد كلمة المرور</label>
+                        <input type="password" id="register-confirm" placeholder="أعد إدخال كلمة المرور" required>
+                    </div>
+                    
+                    <button id="register-btn">إنشاء حساب جديد</button>
+                    
+                    <div class="error-message" id="register-error"></div>
                 </div>
             </div>
             
-            <!-- لوحة المستخدم بعد تسجيل الدخول -->
-            <div class="user-dashboard" id="user-dashboard">
-                <h2 class="welcome-message">مرحبًا بك في حسابك الشخصي</h2>
+            <!-- معلومات المستخدم بعد تسجيل الدخول -->
+            <div class="user-info" id="user-info">
+                <h2 class="welcome-message">مرحباً بك في حسابك</h2>
                 
-                <div class="dashboard-grid">
-                    <!-- معلومات المصادقة -->
-                    <div class="info-card">
-                        <h3 class="card-title"><i class="fas fa-id-card"></i> معلومات المصادقة</h3>
-                        <div class="info-item">
-                            <span class="info-label">البريد الإلكتروني:</span>
-                            <span class="info-value" id="auth-email">user@example.com</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">طريقة الدخول:</span>
-                            <span class="info-value" id="auth-provider">بريد إلكتروني وكلمة مرور</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">آخر دخول:</span>
-                            <span class="info-value" id="auth-last-login">2023-10-15 12:30:45</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">تاريخ إنشاء الحساب:</span>
-                            <span class="info-value" id="auth-created">2023-10-10</span>
-                        </div>
-                    </div>
-                    
-                    <!-- معلومات قاعدة البيانات -->
-                    <div class="info-card">
-                        <h3 class="card-title"><i class="fas fa-database"></i> معلومات قاعدة البيانات</h3>
-                        <div class="info-item">
-                            <span class="info-label">الاسم الكامل:</span>
-                            <span class="info-value" id="db-name">محمد أحمد</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">عدد مرات الدخول:</span>
-                            <span class="info-value" id="db-logins">12</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">عمر الحساب:</span>
-                            <span class="info-value" id="db-age">5 أيام</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">معرف المستخدم:</span>
-                            <span class="info-value" id="db-uid">AbCdEf12345</span>
-                        </div>
-                    </div>
+                <div class="user-details">
+                    <div class="user-name" id="display-name"></div>
+                    <div class="user-email" id="display-email"></div>
                 </div>
                 
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-label">أيام في الموقع</div>
-                        <div class="stat-value" id="stat-days">5</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">مرات الدخول</div>
-                        <div class="stat-value" id="stat-logins">12</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">مستوى الأمان</div>
-                        <div class="stat-value" id="stat-security">90%</div>
-                    </div>
-                </div>
-                
-                <!-- قسم استكمال الملف الشخصي لمستخدمي جوجل الجدد -->
-                <div class="profile-setup" id="profile-setup">
-                    <h3 class="setup-title">استكمال إنشاء حسابك</h3>
-                    <p>يبدو أنك جديد هنا! يرجى إنشاء حساب خاص بك قبل الوصول إلى محتوى الموقع.</p>
-                    
-                    <div class="form-group">
-                        <label for="profile-name">الاسم الكامل</label>
-                        <input type="text" id="profile-name" placeholder="ادخل اسمك الكامل" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="profile-password">كلمة المرور</label>
-                        <input type="password" id="profile-password" placeholder="أنشئ كلمة مرور قوية" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="profile-confirm">تأكيد كلمة المرور</label>
-                        <input type="password" id="profile-confirm" placeholder="أعد إدخال كلمة المرور" required>
-                    </div>
-                    
-                    <button id="complete-profile-btn">
-                        <i class="fas fa-check-circle"></i> استكمال إنشاء الحساب
-                    </button>
-                    
-                    <div class="error-message" id="profile-error"></div>
-                </div>
-                
-                <div class="actions">
-                    <div class="action-btn edit-btn">
-                        <i class="fas fa-edit"></i> تعديل الحساب
-                    </div>
-                    <div class="action-btn logout-btn" id="logout-btn">
-                        <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
-                    </div>
-                </div>
+                <button id="logout-btn">تسجيل الخروج</button>
             </div>
         </div>
         
         <footer>
-            <p>جميع الحقوق محفوظة &copy; 2023 | نظام إدارة الحسابات المتقدم</p>
+            <p>جميع الحقوق محفوظة &copy; 2023</p>
         </footer>
     </div>
 
     <script>
-        // التهيئة - استبدل ببياناتك من Firebase
-        // firebase-config.js
-const firebaseConfig = {
-    apiKey: "AIzaSyC7z9hhq51EhsdsWfAQmFEYNgCeYqkiAQ8",
-    authDomain: "website-23082.firebaseapp.com",
-    databaseURL: "https://website-23082-default-rtdb.firebaseio.com",
-    projectId: "website-23082",
-    storageBucket: "website-23082.appspot.com",
-    messagingSenderId: "650852775693",
-    appId: "1:650852775693:web:22a7acd661478d10a1a244"
-};
+        // تهيئة Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyC7z9hhq51EhsdsWfAQmFEYNgCeYqkiAQ8",
+            authDomain: "website-23082.firebaseapp.com",
+            databaseURL: "https://website-23082-default-rtdb.firebaseio.com",
+            projectId: "website-23082",
+            storageBucket: "website-23082.appspot.com",
+            messagingSenderId: "650852775693",
+            appId: "1:650852775693:web:22a7acd661478d10a1a244"
+        };
 
-firebase.initializeApp(firebaseConfig);
-
-// الحصول على مراجع الخدمات التي ستستخدمها
-const auth = firebase.auth();
-const database = firebase.database();
-
-
-
-
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
         
         // عناصر الواجهة
         const authForms = document.getElementById('auth-forms');
         const loginForm = document.getElementById('login-form');
         const registerForm = document.getElementById('register-form');
-        const userDashboard = document.getElementById('user-dashboard');
+        const userInfo = document.getElementById('user-info');
         const loginBtn = document.getElementById('login-btn');
         const registerBtn = document.getElementById('register-btn');
         const googleLoginBtn = document.getElementById('google-login');
         const logoutBtn = document.getElementById('logout-btn');
         const loginError = document.getElementById('login-error');
         const registerError = document.getElementById('register-error');
-        const profileSetup = document.getElementById('profile-setup');
-        const completeProfileBtn = document.getElementById('complete-profile-btn');
-        const profileError = document.getElementById('profile-error');
         const tabs = document.querySelectorAll('.tab');
+        const displayName = document.getElementById('display-name');
+        const displayEmail = document.getElementById('display-email');
         
-        // متغيرات الحالة
-        let currentUser = null;
-        let isNewGoogleUser = false;
-
         // التبديل بين التبويبات
         tabs.forEach(tab => {
             tab.addEventListener('click', () => {
@@ -702,8 +318,8 @@ const database = firebase.database();
                 tab.classList.add('active');
                 
                 const tabId = tab.getAttribute('data-tab');
-                loginForm.style.display = tabId === 'login' ? 'block' : 'none';
-                registerForm.style.display = tabId === 'register' ? 'block' : 'none';
+                loginForm.classList.toggle('active', tabId === 'login');
+                registerForm.classList.toggle('active', tabId === 'register');
             });
         });
         
@@ -717,11 +333,10 @@ const database = firebase.database();
             auth.signInWithEmailAndPassword(email, password)
                 .then((userCredential) => {
                     const user = userCredential.user;
-                    checkUserProfile(user);
+                    showUserInfo(user);
                 })
                 .catch((error) => {
-                    loginError.textContent = error.message;
-                    loginError.style.display = 'block';
+                    showError(loginError, error.message);
                 });
         });
         
@@ -735,30 +350,23 @@ const database = firebase.database();
             registerError.style.display = 'none';
             
             if (password !== confirmPassword) {
-                registerError.textContent = 'كلمتا المرور غير متطابقتين';
-                registerError.style.display = 'block';
+                showError(registerError, 'كلمتا المرور غير متطابقتين');
                 return;
             }
             
             if (password.length < 6) {
-                registerError.textContent = 'كلمة المرور يجب أن تكون 6 أحرف على الأقل';
-                registerError.style.display = 'block';
+                showError(registerError, 'كلمة المرور يجب أن تكون 6 أحرف على الأقل');
                 return;
             }
             
             auth.createUserWithEmailAndPassword(email, password)
                 .then((userCredential) => {
                     const user = userCredential.user;
-                    
-                    // حفظ معلومات المستخدم في قاعدة البيانات
                     saveUserData(user.uid, name, email);
-                    
-                    // إظهار لوحة المستخدم
-                    showUserDashboard(user);
+                    showUserInfo(user);
                 })
                 .catch((error) => {
-                    registerError.textContent = error.message;
-                    registerError.style.display = 'block';
+                    showError(registerError, error.message);
                 });
         });
         
@@ -769,92 +377,30 @@ const database = firebase.database();
             auth.signInWithPopup(provider)
                 .then((result) => {
                     const user = result.user;
-                    currentUser = user;
-                    
-                    // التحقق مما إذا كان المستخدم موجودًا في قاعدة البيانات
-                    checkIfUserExists(user);
+                    const name = user.displayName || user.email.split('@')[0];
+                    saveUserData(user.uid, name, user.email);
+                    showUserInfo(user);
                 })
                 .catch((error) => {
-                    loginError.textContent = error.message;
-                    loginError.style.display = 'block';
-                });
-        });
-        
-        // التحقق من وجود المستخدم في قاعدة البيانات
-        function checkIfUserExists(user) {
-            const userRef = database.ref('users/' + user.uid);
-            
-            userRef.once('value').then((snapshot) => {
-                if (snapshot.exists()) {
-                    // المستخدم موجود، إظهار لوحة المستخدم
-                    showUserDashboard(user);
-                } else {
-                    // المستخدم جديد، إظهار نموذج استكمال الحساب
-                    isNewGoogleUser = true;
-                    userDashboard.style.display = 'flex';
-                    authForms.style.display = 'none';
-                    profileSetup.style.display = 'block';
-                }
-            });
-        }
-        
-        // استكمال إنشاء الحساب لمستخدمي جوجل الجدد
-        completeProfileBtn.addEventListener('click', () => {
-            const name = document.getElementById('profile-name').value;
-            const password = document.getElementById('profile-password').value;
-            const confirmPassword = document.getElementById('profile-confirm').value;
-            
-            profileError.style.display = 'none';
-            
-            if (password !== confirmPassword) {
-                profileError.textContent = 'كلمتا المرور غير متطابقتين';
-                profileError.style.display = 'block';
-                return;
-            }
-            
-            if (password.length < 6) {
-                profileError.textContent = 'كلمة المرور يجب أن تكون 6 أحرف على الأقل';
-                profileError.style.display = 'block';
-                return;
-            }
-            
-            if (!name) {
-                profileError.textContent = 'الرجاء إدخال اسمك الكامل';
-                profileError.style.display = 'block';
-                return;
-            }
-            
-            // إنشاء حساب مع البريد الإلكتروني من جوجل
-            const email = currentUser.email;
-            const credential = firebase.auth.EmailAuthProvider.credential(email, password);
-            
-            // ربط حساب جوجل بحساب البريد الإلكتروني
-            currentUser.linkWithCredential(credential)
-                .then((usercred) => {
-                    // حفظ معلومات المستخدم في قاعدة البيانات
-                    saveUserData(currentUser.uid, name, email);
-                    
-                    // إخفاء نموذج الاستكمال وإظهار لوحة المستخدم
-                    profileSetup.style.display = 'none';
-                    showUserDashboard(currentUser);
-                })
-                .catch((error) => {
-                    profileError.textContent = error.message;
-                    profileError.style.display = 'block';
+                    showError(loginError, error.message);
                 });
         });
         
         // تسجيل الخروج
         logoutBtn.addEventListener('click', () => {
-            auth.signOut()
-                .then(() => {
-                    userDashboard.style.display = 'none';
-                    authForms.style.display = 'flex';
-                    tabs[0].click();
-                })
-                .catch((error) => {
-                    console.error('خطأ في تسجيل الخروج:', error);
-                });
+            auth.signOut().then(() => {
+                userInfo.style.display = 'none';
+                authForms.style.display = 'block';
+                tabs[0].click();
+                
+                // إعادة تعيين حقول النموذج
+                document.getElementById('login-email').value = '';
+                document.getElementById('login-password').value = '';
+                document.getElementById('register-name').value = '';
+                document.getElementById('register-email').value = '';
+                document.getElementById('register-password').value = '';
+                document.getElementById('register-confirm').value = '';
+            });
         });
         
         // حفظ بيانات المستخدم في قاعدة البيانات
@@ -869,12 +415,10 @@ const database = firebase.database();
                 };
                 
                 if (!snapshot.exists()) {
-                    // حساب جديد
                     userData.createdAt = new Date().toISOString();
                     userData.loginCount = 1;
                     userRef.set(userData);
                 } else {
-                    // تحديث البيانات
                     const currentData = snapshot.val();
                     userData.loginCount = (currentData.loginCount || 0) + 1;
                     userRef.update(userData);
@@ -882,87 +426,42 @@ const database = firebase.database();
             });
         }
         
-        // إظهار لوحة المستخدم
-        function showUserDashboard(user) {
+        // إظهار معلومات المستخدم
+        function showUserInfo(user) {
             authForms.style.display = 'none';
-            userDashboard.style.display = 'flex';
-            profileSetup.style.display = 'none';
+            userInfo.style.display = 'block';
             
-            // تحديث معلومات المصادقة
-            document.getElementById('auth-email').textContent = user.email;
-            document.getElementById('auth-provider').textContent = 
-                user.providerData[0].providerId === 'google.com' ? 
-                'حساب جوجل' : 'بريد إلكتروني وكلمة مرور';
-            
-            document.getElementById('auth-last-login').textContent = 
-                new Date().toLocaleString('ar-EG');
-                
-            document.getElementById('auth-created').textContent = 
-                new Date(user.metadata.creationTime).toLocaleDateString('ar-EG');
-            
-            // الحصول على بيانات المستخدم من قاعدة البيانات
+            // عرض الاسم والبريد الإلكتروني
             const userRef = database.ref('users/' + user.uid);
             
             userRef.once('value').then((snapshot) => {
                 const userData = snapshot.val();
                 
-                if (userData) {
-                    // تحديث معلومات قاعدة البيانات
-                    document.getElementById('db-name').textContent = userData.name || 'غير محدد';
-                    document.getElementById('db-logins').textContent = userData.loginCount || 1;
-                    document.getElementById('db-uid').textContent = user.uid;
-                    
-                    // حساب عمر الحساب بالأيام
-                    if (userData.createdAt) {
-                        const createdAt = new Date(userData.createdAt);
-                        const now = new Date();
-                        const diffTime = Math.abs(now - createdAt);
-                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                        document.getElementById('db-age').textContent = diffDays + ' أيام';
-                        
-                        // تحديث الإحصائيات
-                        document.getElementById('stat-days').textContent = diffDays;
-                        document.getElementById('stat-logins').textContent = userData.loginCount || 1;
-                        document.getElementById('stat-security').textContent = 
-                            user.providerData[0].providerId === 'google.com' ? '95%' : '85%';
-                    }
+                if (userData && userData.name) {
+                    displayName.textContent = userData.name;
+                } else {
+                    displayName.textContent = user.displayName || user.email.split('@')[0];
                 }
+                
+                displayEmail.textContent = user.email;
             });
         }
         
         // التحقق من حالة المصادقة عند تحميل الصفحة
         auth.onAuthStateChanged((user) => {
             if (user) {
-                checkUserProfile(user);
+                showUserInfo(user);
             } else {
-                userDashboard.style.display = 'none';
-                authForms.style.display = 'flex';
+                userInfo.style.display = 'none';
+                authForms.style.display = 'block';
             }
         });
         
-        // التحقق من ملف المستخدم
-        function checkUserProfile(user) {
-            const userRef = database.ref('users/' + user.uid);
-            
-            userRef.once('value').then((snapshot) => {
-                if (snapshot.exists()) {
-                    showUserDashboard(user);
-                } else {
-                    // إذا كان المستخدم دخل بحساب جوجل ولم يكمّل ملفه
-                    if (user.providerData[0].providerId === 'google.com') {
-                        isNewGoogleUser = true;
-                        currentUser = user;
-                        userDashboard.style.display = 'flex';
-                        authForms.style.display = 'none';
-                        profileSetup.style.display = 'block';
-                    } else {
-                        // للمستخدمين الآخرين، إنشاء ملف تلقائي
-                        saveUserData(user.uid, user.email.split('@')[0], user.email);
-                        showUserDashboard(user);
-                    }
-                }
-            });
+        // مساعد: عرض رسالة خطأ
+        function showError(element, message) {
+            element.textContent = message;
+            element.style.display = 'block';
         }
     </script>
 </body>
-                                </html>
+    </html>
